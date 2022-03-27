@@ -15,14 +15,17 @@ export const GithubProvider = ({ children }) => {
   //   const [users, setUsers] = useState([]);
   //   const [loading, setLoading] = useState(true);
 
-  //   Get initial users (testing purposes)
-  const fetchUsers = async () => {
+  //   Get search result (testing purposes)
+  const searchUsers = async (text) => {
     setLoading();
-    const response = await fetch(`${process.env.REACT_APP_GITHUB_URL}/users`, {
+    const params = new URLSearchParams({
+      q: text,
+    });
+    const response = await fetch(`${GITHUB_URL}/search/users?${params}`, {
       headers: { Authorization: `token ${GITHUB_TOKEN}` },
     });
-    const data = await response.json();
-    dispatch({ type: "GET_USERS", payload: data });
+    const { items } = await response.json();
+    dispatch({ type: "GET_USERS", payload: items });
   };
 
   //   Set loading
@@ -32,7 +35,7 @@ export const GithubProvider = ({ children }) => {
 
   return (
     <GithubContext.Provider
-      value={{ users: state.users, loading: state.loading, fetchUsers }}
+      value={{ users: state.users, loading: state.loading, searchUsers }}
     >
       {children}
     </GithubContext.Provider>
